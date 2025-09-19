@@ -25,6 +25,7 @@ class RegisterView(APIView):
         
         user_function = UserFunctions(user=user)
         if not user_function.user_register_to_redis():
+            user.delete()
             return Response({"error":"Errrrror"})
         return Response(
             data={

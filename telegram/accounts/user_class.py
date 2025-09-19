@@ -13,9 +13,9 @@ class UserFunctions():
             user = {
                 "username":self.user.username,
                 "id":self.user.id,
-                "password":self.user.password
             }
             r.hset(f"user:{self.user.id}",mapping=user)
+            r.sadd("users",self.user.id)
             print("user is registered")
             return True
         except Exception as e:
@@ -28,6 +28,8 @@ class UserFunctions():
             "connected":True
         }
         return data
+    def decode_dict(self,data:dict):
+        return {k.decode():v.decode() for k,v in data.items()}
     
     def result(self,data):
         obj = {
@@ -44,3 +46,10 @@ class UserFunctions():
         users = User.objects.all()
         return self.result(UserSerializer(users,many=True).data)
     
+    def get_all_users_from_redis(self):
+        users = []
+        for user_id in r.smembers("users"):
+            user = r.hgetall(f"user:{user_id.decode()}")
+            users.append(self.decode_dict(user))
+        print(users)
+        return self.result(users)
