@@ -2,7 +2,9 @@ from django.contrib.auth.models import User
 from .user_serializer import UserSerializer
 
 import redis
-r = redis.Redis(host="localhost",port=6379,db=0)
+from redis_server_settings import PORT,REDIS_HOST,DB
+
+r = redis.Redis(host=REDIS_HOST,port=PORT,db=DB)
 
 class UserFunctions():
     def __init__(self,user:User):
