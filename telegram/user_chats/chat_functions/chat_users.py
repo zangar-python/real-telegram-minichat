@@ -13,20 +13,12 @@ class Chat_usersClass:
         pass
     
     def del_user_from_chat(self,id_user:int):
-        # if id_user == self.user.id:
-        #     data = {
-        #         "connect":False,
-        #         "id-obj-to-delete":id_user,
-        #         "deleted":False,
-        #         "error":"Вы пытаетесь удалить самого себя.Лучше выйдите из группы"
-        #     }
-        #     return 
         res = self.if_user_in_this_chat()
         if res:
             return res
         
         if self.chat.users.filter(id=id_user).exists():
-            self.chat.users.remove(User.objects.get(id=id_user))
+            self.chat.users.remove(id_user)
             data = {
                 "connect":True,
                 "id-obj-to-delete":id_user,
@@ -66,7 +58,7 @@ class Chat_usersClass:
                 "error":"Этот чат для личной переписки а не групповой!"
             }
             return self.get_result(data=data)
-        self.chat.users.add(User.objects.get(id=id_user))
+        self.chat.users.add(id_user)
         data = {
             "id-user-to-add":id_user,
             "connect":True,
