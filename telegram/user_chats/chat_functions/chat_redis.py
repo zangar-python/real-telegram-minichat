@@ -54,7 +54,48 @@ class RedisChat:
             r.delete(f"chat:{id}:users")
             r.srem("chat_id",id)
             return True
-        except Exception:
-            print(Exception,"REDIS ERROR DELETE")
+        except Exception as e:
+            print("REDIS ERROR DELETE",e)
             return False
-    
+    @staticmethod
+    def delete_user_from_chat(user_id,chat_id):
+        if not r.sismember(f"chat:{chat_id}:users",user_id):
+            return {
+                "err":True,
+                "text":"Пользователь не существует"
+            }
+        r.srem(f"chat:{chat_id}:users",user_id)
+        return None      
+    @staticmethod
+    def add_user_to_chat(user_id,chat_id):
+        try:
+            r.sadd(f"chat:{chat_id}:users",user_id)
+            return None
+        except Exception as e:
+            print(e)
+            return {
+                "err":True,
+                "text":"Что-то пошло не так"
+            }
+    @staticmethod
+    def add_users_to_chatMany(users_id,chat_id):
+        try:
+            r.sadd(f"chat:{chat_id}:users",*users_id)
+            return None
+        except Exception as e:
+            print(e)
+            return {
+                "err":True,
+                "text":"Что-то пошло не так"
+            }
+    @staticmethod 
+    def delete_many_users_from_chat(users_id,chat_id):
+        try:
+            r.srem(f"chat:{chat_id}:users",*users_id)
+            return None
+        except Exception as e:
+            print(e)
+            return {
+                "err":True,
+                "text":"Что-то пошло не так"
+            }
