@@ -61,4 +61,4 @@ class MessagesViews(APIView):
     def get(self,request:Request,id):
         if not Chat.objects.filter(id=id).exists():
             return Response(UserFunctions(request.user).result("Неправильные данные по айди"))
-        return Response(data=UserFunctions(request.user).result(MessageRedis.get_messages(chat_id=id)))
+        return Response(data=UserFunctions(request.user).result(MessageRedis.get_messages(chat_id=id,user_id=request.user.id)))
