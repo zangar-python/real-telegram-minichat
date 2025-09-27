@@ -37,15 +37,15 @@ class RedisChat:
         chat["users"] = users
         return chat
     @staticmethod 
-    def get_all_chats():
-        chats_ids = [ int(id.decode()) for id in r.smembers("chat_id")]
+    def get_all_chats(chats_id):
         chats = []
-        for id in chats_ids:
+        for id in chats_id:
             chat = RedisChat.get_chat_by_id(id=id)
             if chat:
                 chats.append(chat)
             else:
                 r.srem("chat_id",id)
+        print(chats)
         return chats
     @staticmethod 
     def delete_chat_by_id(id):

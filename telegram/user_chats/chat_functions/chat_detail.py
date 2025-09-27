@@ -93,3 +93,14 @@ class CreateChat:
         if RedisChat.delete_chat_by_id(id) == False:
             return "Не удален в Redis"
         return "Удален успешно"
+    
+    @staticmethod 
+    def get_users_chats(request:Request):
+        user : User = request.user
+        chats_id = [chat.id for chat in user.chats.all()]
+        return RedisChat.get_all_chats(chats_id)
+    
+    @staticmethod
+    def get_all_chats():
+        chats = Chat.objects.all()
+        return ChatSerializer(chats,many=True).data

@@ -145,3 +145,4 @@ class Chat_usersClass:
             self.chat.users.add(*users_id)
             return self.get_result(err_redis)
         return self.get_result("Удалено из чата")
+    

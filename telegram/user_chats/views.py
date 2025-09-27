@@ -21,7 +21,7 @@ class ChatsViews(APIView):
             return chat_class.result_chat(data)
         return chat_class.create_chat_res()
     def get(self,request:Request):
-        data = UserFunctions(user=request.user).result(data=RedisChat.get_all_chats())
+        data = UserFunctions(user=request.user).result(data=CreateChat.get_users_chats(request))
         return Response(data=data)
 class ChatsDetailView(APIView):
     def get(self,request:Request,id):

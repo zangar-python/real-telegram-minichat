@@ -10,7 +10,7 @@ class Chanel(models.Model):
     more = models.CharField(max_length=400,null=True)
     admins = models.ManyToManyField(User,related_name="my_chanels")
     users = models.ManyToManyField(User,related_name="chanels")
-    private = models.BooleanField(default=False)
+    private = models.BooleanField(default="false")
 
 class Message(models.Model):
     chanel = models.ForeignKey(Chanel,on_delete=models.CASCADE,related_name="messages")
