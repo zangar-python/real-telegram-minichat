@@ -81,3 +81,36 @@ class ChanelsClass:
         user_chanel_ids = [ch.id for ch in self.user.my_chanels.all()]
         data = ChanalRedis.get_chanel([*chanel_ids,*user_chanel_ids])
         return self.result(data)
+    def user_unregistered(self,chanel_id):
+        chanel = get_object_or_404(Chanel,id=chanel_id)
+        if chanel.users.filter(id=self.user.id).exists():
+            chanel.users.remove(self.user.id)
+            ChanalRedis.delete_user_from_chanel(self.user.id,chanel.id)
+            return self.result({
+                "deleted":True,
+                }
+            )
+        elif chanel.admins.filter(id=self.user.id).exists():
+            if chanel.admins.count() < 2:
+                return self.result("Вы должны оставить хотя бы одного админа для тго чтобы выйти с этого канала")
+            else:
+                chanel.admins.remove(self.user.id)
+                ChanalRedis.delete_admin(self.user.id,chanel_id)
+                return self.result({"deleted":True})
+        else:
+            return self.result("Вы не являетесь участником этого канала")
+    
+    def delete_user_from_chanel(self,users_id,chanel_id):
+        is_admin = self.user_is_admin(chanel_id)
+        if not is_admin:
+            return self.result("Вы не являетесь админом этого канала")
+        channel = get_object_or_404(Chanel,id=chanel_id)
+        channel.users.remove(*users_id)
+        ChanalRedis.delete_user_from_chanel(users_id,chanel_id)
+        return self.result("Удалено OK!")
+    def get_users_channel(self,channel_id):
+        channel= get_object_or_404(Chanel,id=channel_id)
+        return self.result({
+            "users":[user.id for user in channel.users.all()],
+            "admins":[admin.id for admin in channel.admins.all()]
+        })

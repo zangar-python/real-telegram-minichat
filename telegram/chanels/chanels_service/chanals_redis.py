@@ -1,15 +1,12 @@
 import redis
 from redis_server_settings import REDIS_HOST,PORT,DB
-from rest_framework.request import Request
-from django.contrib.auth.models import User
-from ..serializer import MessageSerializer,Message
+# from rest_framework.request import Request
+# from django.contrib.auth.models import User
+from ..serializer import MessageSerializer
 
 r = redis.Redis(host=REDIS_HOST,port=PORT,db=DB)
 
 class ChanalRedis:
-    # def __init__(self,request:Request):
-    #     self.user:User = request.user
-    #     pass
     @staticmethod
     def get_chanel(ids):
         res = []
@@ -18,6 +15,12 @@ class ChanalRedis:
             chanel["id"] = id
             res.append(chanel)
         return res
+    @staticmethod 
+    def delete_user_from_chanel(users_id,chanel_id):
+        r.srem(f"chanel:{chanel_id}:users",*users_id)
+    @staticmethod
+    def delete_admin(admin_id,chanel_id):
+        r.srem(f"chanel:{chanel_id}:admins",admin_id)
     
     @staticmethod
     def set_message(msg):
@@ -33,12 +36,9 @@ class ChanalRedis:
             decoded_msg = ChanalRedis.decoding_dict(message)
             msgs.append(decoded_msg)
         return msgs
-        
-    
     @staticmethod
     def decoding_dict(obj):
         return {k.decode():v.decode() for k,v in obj.items()} 
-    
     @staticmethod
     def add_users(users,chanel_id): 
         r.sadd(f"chanel:{chanel_id}:users",*users)

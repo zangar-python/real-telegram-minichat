@@ -31,3 +31,19 @@ class register_to_chanel_views(APIView):
     def post(self,request:Request,id):
         chanel_class = ChanelsClass(request)
         return chanel_class.user_register_to_chanal(id)
+    def delete(self,request:Request,id):
+        chanel_class = ChanelsClass(request)
+        return chanel_class.user_unregistered(id)
+
+class user_channel_views(APIView):
+    def post(self,request:Request,id):
+        chanel_class = ChanelsClass(request)
+        return chanel_class.add_users_to_chanal(id,request)
+    def delete(self,request:Request,id):
+        channel_class = ChanelsClass(request)
+        users_id = request.data.get("users",[])
+        return channel_class.delete_user_from_chanel(users_id,id)
+    def get(self,request:Request,id):
+        channel_class = ChanelsClass(request)
+        return channel_class.get_users_channel(id)
+        
